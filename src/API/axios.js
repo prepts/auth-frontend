@@ -1,6 +1,7 @@
 import axios from "axios";
 import { omit } from "lodash";
 import { getItem } from "../utils";
+import { refreshToken } from "./apiCall";
 
 const customAxios = axios.create({
   baseURL: "http://localhost:8000",
@@ -29,8 +30,8 @@ customAxios.interceptors.response.use(
     return response.data;
   },
   (err) => {
-    if (err.response.status === 401) {
-      console.error("Please Login again");
+    if (err.response.data.name === "TokenExpiredError") {
+      refreshToken();
     }
 
     return Promise.reject(err);

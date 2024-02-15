@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
       .then((res) => {
         console.log({ logiRes: res });
         setItem("authtoken", res.data.token);
-        setItem("expire", res.data.expire);
       })
       .catch((err) => {
         console.log({ loginError: err });
