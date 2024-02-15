@@ -1,5 +1,7 @@
 import { isEmpty } from "lodash";
 import { createContext, useContext, useEffect, useState } from "react";
+import { getItem, setItem } from "../utils";
+import { customAxios } from "../API/axios";
 
 const AuthContext = createContext(null);
 
@@ -7,31 +9,23 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const userInfo = localStorage.getItem("authtoken");
+    const userInfo = getItem("authtoken");
 
-    setIsLoggedIn(isEmpty(userInfo));
+    setIsLoggedIn(!isEmpty(userInfo));
   }, []);
 
   const login = () => {
-    fetch("http://localhost:8000/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: JSON.stringify({
+    customAxios
+      .post("/auth/login", {
         email: "thiru@gmail.com",
         password: "softsuave#123",
-      }),
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        debugger
-        console.log(result);
-        localStorage.setItem("authtoken", result.data.token);
       })
-      .catch((error) => {
-        console.log(error);
+      .then((res) => {
+        console.log({ logiRes: res });
+        setItem("authtoken", res.data.token);
+      })
+      .catch((err) => {
+        console.log({ loginError: err });
       });
   };
 
